@@ -13,7 +13,7 @@ which is equivalent to the 2D Laplacian of the surface.
 Slope (S) is
 S = sqrt(d^2 + e^2).
 
-Use the side length (L), also called scale, to specifying the area of the moving window focused on each cell that is used for computing slope and curvature.
+Use the side length (L), also called scale, to specifying the area of the moving window (L x L) focused on each cell that is used for computing slope and curvature.
 
 Dependecies
 ---------
