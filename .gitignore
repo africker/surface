@@ -1,0 +1,7 @@
+# Ignore OS files
+.DS_Store
+.Trashes
+.Spotlight-*
+
+input
+output
