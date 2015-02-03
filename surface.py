@@ -146,7 +146,7 @@ class Surface(object):
 
 
 def main():
-	pass
+	args = getArgs()
 
 if __name__ == "__main__":
 	main()
