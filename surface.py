@@ -225,7 +225,7 @@ def reduce_func():
 def main():
 	args = getArgs()
 	L = args.length
-	if L%2 == 1:
+	if L%2 != 1:
 		print "L must be an odd number. Exiting."
 		sys.exit(1)
 	outdir = args.outdir
