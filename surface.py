@@ -1,8 +1,44 @@
+import argparse
 import numpy as np
 from numpy.linalg import inv
 import gdal
 from gdalconst import *
 from osgeo import osr
+
+
+def getArgs():
+	parser = argparse.ArgumentParser(
+		description="Surface analysis of a DEM"
+	)
+	parser.add_argument(
+		"-d",
+		"--dem",
+		required=True,
+		type=str,
+		help= "Input DEM"
+	)
+	parser.add_argument(
+		"-l",
+		"--length",
+		required=True,
+		type = int,
+		help = "Side length for L x L kernel"
+	)
+	parser.add_argument(
+		"-o",
+		"outdir",
+		required=True,
+		type = str,
+		help = "Output directory"
+	)
+	parser.add_argument(
+		"-v",
+		"--verbose",
+		required = False,
+		action = "store_true",
+		help = "Print status updates while executing"
+	)
+	return parser.parse_args()
 
 class Raster(object):
 	def __init__(self, args):
@@ -106,3 +142,11 @@ class Surface(object):
 			self.cx*self.cy,self.cx,self.cy,1])
 		self.elevation = np.dot(self.B, X_tilde)
 		return self.elevation
+
+
+
+def main():
+	pass
+
+if __name__ == "__main__":
+	main()
