@@ -11,7 +11,9 @@ C = 2a + 2b,
 which is equivalent to the 2D Laplacian of the surface.
 
 Slope (S) is
-S = sqrt(d<sup>2</sup> + e<sup>2</sup>).
+S = sqrt(d<sup>2</sup> + e<sup>2</sup>),
+
+and Elevation e is the prediction from the surface model at the focal cell (x<sub>c</sub>,y<sub>c</sub>)
 
 Use the side length (L), also called scale, to specifying the area of the moving window (L x L) focused on each cell that is used for computing slope and curvature.
 
