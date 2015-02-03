@@ -170,22 +170,36 @@ def getWindow(x,y,L):
 	xmin = x - s
 	if xmin < 0:
 		xmin = 0
-	xmax = x + s
+	xmax = x + s + 1
 	ymin = y - s
 	if ymin < 0:
 		ymin = 0
-	ymax = y + s
+	ymax = y + s + 1
 	return xmin,xmax,ymin,ymax
 
 def map_func(tile, data, L):
 	gy,gx = tile
 	gx,gy = gx.flatten(),gy.flatten()
+	elev = np.zeros(len(gx))
+	slope = np.zeros(len(gx))
+	curve = np.zeros(len(gx))
 	for cx,cy in zip(gx,gy):
-		xmin,xmax,ymin,ymax=getWindow(x,y,L)
+		xmin,xmax,ymin,ymax=getWindow(cx,cy,L)
 		Z = data[ymin:ymax,xmin:xmax]
-		surface = Surface(x,y,z,cx,cy)
-		surface.fit()
-	pass
+		x = gx[]
+		y = gy[]
+		not_nan = len(Z[Z!=np.nan])
+		if not_nan < 6 or data[cx,cy]==np.nan:
+			elev[gx==cx and gy==cy] = np.nan
+			slope[gx==cx and gy==cy] = np.nan
+			curve[gx==cx and gy==cy] = np.nan
+		else:
+			surface = Surface(x,y,z,cx,cy)
+			surface.fit()
+			elev[gx==cx and gy==cy] = surface.elevation()
+			slope[gx==cx and gy==cy] = surface.slope()
+			curve[gx==cx and gy==cy] = surface.curvature()
+	return (gx,gy,elev,slope,curve)
 
 def map_star_func(a_b):
 	return map_func(*a_b)
