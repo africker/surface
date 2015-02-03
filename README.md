@@ -42,6 +42,14 @@ On Windows you do not need to make the program executable - it already will be. 
 
 Try opening up the output rasters in QGIS or your favorite GIS.
 
+For additional information try running
+
+`./surface.py -h` on Mac or Linux 
+
+or
+
+`python surface.py -h` on Windows.
+
 
 References
 ---------
