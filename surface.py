@@ -29,7 +29,7 @@ def getArgs():
 	)
 	parser.add_argument(
 		"-o",
-		"outdir",
+		"--outdir",
 		required=True,
 		type = str,
 		help = "Output directory"
