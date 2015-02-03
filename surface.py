@@ -1,4 +1,5 @@
-import argparse
+import argparse, itertools, os
+import multiprocessing as mp
 import numpy as np
 from numpy.linalg import inv
 import gdal
@@ -162,6 +163,8 @@ class Surface(object):
 			self.cx*self.cy,self.cx,self.cy,1])
 		self.elevation = np.dot(self.B, X_tilde)
 		return self.elevation
+
+
 
 
 def main():
