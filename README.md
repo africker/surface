@@ -62,7 +62,7 @@ or
 
 References
 ---------
-[1] Hurst MD, Mudd SM, Walcott R, Attal M, Yoo K (2012) Using hilltop curvature to derive the spatial distribution of erosion rates. J Geophys Res Earth Surf 117:F0217. <a href="http://doi:10.1029/2011JF002057">doi:10.1029/2011JF002057</a>
+[1] Hurst MD, Mudd SM, Walcott R, Attal M, Yoo K (2012) Using hilltop curvature to derive the spatial distribution of erosion rates. J Geophys Res Earth Surf 117:F0217. <a href="doi:10.1029/2011JF002057">doi:10.1029/2011JF002057</a>
 
 
 Notes
