@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 import argparse, itertools, os, sys
 import multiprocessing as mp
 import numpy as np
