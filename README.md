@@ -3,7 +3,7 @@ Introduction
 Model slope and curvature from a DEM [1]. The surface is modeled as a six-term polynomial. 
 
 The surface is
-F(x,y) = ax^2 + by^2 + cxy + dx + ey + f,
+F(x,y) = ax<sup>2</sup> + by<sup>2</sup> + cxy + dx + ey + f,
 
 curvature (C) is 
 C = 2a + 2b,
@@ -11,7 +11,7 @@ C = 2a + 2b,
 which is equivalent to the 2D Laplacian of the surface.
 
 Slope (S) is
-S = sqrt(d^2 + e^2).
+S = sqrt(d<sup>2</sup> + e<sup>2</sup>).
 
 Use the side length (L), also called scale, to specifying the area of the moving window (L x L) focused on each cell that is used for computing slope and curvature.
 
