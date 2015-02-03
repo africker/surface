@@ -45,7 +45,7 @@ Then to calculate the elevation, slope, and curvature using a 9 x 9 window with 
 
 ### Windows
 
-On Windows you do not need to make the program executable - it already will be. Just make a directory (here called "output") to store the output files.  The run surface.py
+On Windows you do not need to make the program executable - it already will be. Just make a directory (here called "output") to store the output files.  Then run surface.py
 
 `python surface.py -d dem-example.tif -o output -l 9`
 
