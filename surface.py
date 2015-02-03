@@ -63,7 +63,7 @@ class Raster(object):
 
 	def getArray(self):
 		self.array = self.band.ReadAsArray()
-		self.array[self.array==NDV]=np.nan
+		self.array[self.array==self.NDV]=np.nan
 		return self.array
 
 	def getTiles(self):
