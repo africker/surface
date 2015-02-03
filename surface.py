@@ -1,4 +1,4 @@
-import argparse, itertools, os
+import argparse, itertools, os, sys
 import multiprocessing as mp
 import numpy as np
 from numpy.linalg import inv
@@ -76,7 +76,7 @@ class Raster(object):
 			while j <= shape[1]:
 				gx = self.gx[i:i+dim,j:j+dim]
 				gy = self.gy[i:i+dim,j:j+dim]
-				tile = [gx,gy]
+				tile = [gy,gx]
 				tiles.append(tile)
 				j += dim
 			j = 0
@@ -164,8 +164,23 @@ class Surface(object):
 		self.elevation = np.dot(self.B, X_tilde)
 		return self.elevation
 
+def getWindow(x,y,L):
+	s = L/2
+	xmin = x - s
+	if xmin < 0:
+		xmin = 0
+	xmax = x + s
+	ymin = y - s
+	if ymin < 0:
+		ymin = 0
+	ymax = y + s
+	return xmin,xmax,ymin,ymax
 
-def map_func():
+def map_func(tile, data, L):
+	gy,gx = tile
+	gx,gy = gx.flatten(),gy.flatten()
+	for x,y in zip(gx,gy):
+		getWindow(x,y,L)
 	pass
 
 def map_star_func(a_b):
@@ -177,6 +192,9 @@ def reduce_func():
 def main():
 	args = getArgs()
 	L = args.length
+	if L%2 = 1:
+		print "L must be an odd number. Exiting."
+		sys.exit(1)
 	outdir = args.outdir
 
 	raster = Raster(args)
