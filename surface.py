@@ -165,17 +165,24 @@ class Surface(object):
 		self.elevation = np.dot(self.B, X_tilde)
 		return self.elevation
 
-def getWindow(x,y,L):
+def getBoundary(x,y,L):
 	s = L/2
 	xmin = x - s
 	if xmin < 0:
 		xmin = 0
-	xmax = x + s + 1
+	xmax = x + s
 	ymin = y - s
 	if ymin < 0:
 		ymin = 0
-	ymax = y + s + 1
+	ymax = y + s
 	return xmin,xmax,ymin,ymax
+
+def getWindow(xmin,xmax,ymin,ymax):
+	xvec = np.arange(xmin,xmax)
+	yvec = np.arange(ymin,ymax)
+	# verify order is correct.
+	xvec, yvec = np.meshgrid(xvec,yvec)
+	return xvec,yvec
 
 def map_func(tile, data, L):
 	gy,gx = tile
@@ -184,22 +191,28 @@ def map_func(tile, data, L):
 	slope = np.zeros(len(gx))
 	curve = np.zeros(len(gx))
 	for cx,cy in zip(gx,gy):
-		xmin,xmax,ymin,ymax=getWindow(cx,cy,L)
-		Z = data[ymin:ymax,xmin:xmax]
-		x = gx[]
-		y = gy[]
-		not_nan = len(Z[Z!=np.nan])
+		xmin,xmax,ymin,ymax=getBoundary(cx,cy,L)
+		xvec, yvec = getWindow(xmin,xmax,ymin,ymax)
+		Z = data[ymin:ymax+1,xmin:xmax+1]
+		z = Z.flatten()
+		z_sub = z[z!=np.nan]
+		not_nan = len(z_sub)
+		i = np.all([gx==cx, gy==cy], axis=0)
 		if not_nan < 6 or data[cx,cy]==np.nan:
-			elev[gx==cx and gy==cy] = np.nan
-			slope[gx==cx and gy==cy] = np.nan
-			curve[gx==cx and gy==cy] = np.nan
+			elev[i] = np.nan
+			slope[i] = np.nan
+			curve[i] = np.nan
 		else:
-			surface = Surface(x,y,z,cx,cy)
+			xvec = xvec[z!=np.nan]
+			yvec = yvec[z!=np.nan]
+			surface = Surface(xvec,yvec,z,cx,cy)
 			surface.fit()
-			elev[gx==cx and gy==cy] = surface.elevation()
-			slope[gx==cx and gy==cy] = surface.slope()
-			curve[gx==cx and gy==cy] = surface.curvature()
-	return (gx,gy,elev,slope,curve)
+			elev[i] = surface.elevation()
+			slope[i] = surface.slope()
+			curve[i] = surface.curvature()
+	result = (gx,gy,elev,slope,curve)
+	print result
+	return result
 
 def map_star_func(a_b):
 	return map_func(*a_b)
