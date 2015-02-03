@@ -10,10 +10,10 @@ C = 2a + 2b,
 
 which is equivalent to the 2D Laplacian of the surface.
 
-Slope (S) is
+slope (S) is
 S = sqrt(d<sup>2</sup> + e<sup>2</sup>),
 
-and Elevation E is 
+and elevation (E) is 
 E = F(x<sub>c</sub>,y<sub>c</sub>) = ax<sub>c</sub><sup>2</sup> + by<sub>c</sub><sup>2</sup> + cx<sub>c</sub>y<sub>c</sub> + dx<sub>c</sub> + ey<sub>c</sub> + f
 
 where x<sub>c</sub> is the x index of the focal cell and y<sub>c</sub> is the y index of the focal cell.
