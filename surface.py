@@ -62,7 +62,8 @@ class Raster(object):
 		self.prj = prj.ImportFromWkt(self.raster.GetProjectionRef())
 
 	def getArray(self):
-		self.array = band.ReadAsArray()
+		self.array = self.band.ReadAsArray()
+		self.array[self.array==NDV]=np.nan
 		return self.array
 
 	def getTiles(self):
@@ -168,6 +169,7 @@ class Surface(object):
 		return self.elevation
 
 def getBoundary(x,y,L):
+	print "In getBoundary"
 	s = L/2
 	xmin = x - s
 	if xmin < 0:
@@ -180,6 +182,7 @@ def getBoundary(x,y,L):
 	return xmin,xmax,ymin,ymax
 
 def getWindow(xmin,xmax,ymin,ymax):
+	print "In getWindow"
 	xvec = np.arange(xmin,xmax)
 	yvec = np.arange(ymin,ymax)
 	# verify order is correct.
@@ -187,13 +190,14 @@ def getWindow(xmin,xmax,ymin,ymax):
 	return xvec.flatten(), yvec.flatten()
 
 def map_func(tile, data, L):
+	print "From map_func"
 	gy,gx = tile
 	gx,gy = gx.flatten(),gy.flatten()
 	elev = np.zeros(len(gx))
 	slope = np.zeros(len(gx))
 	curve = np.zeros(len(gx))
 	for cx,cy in zip(gx,gy):
-		xmin,xmax,ymin,ymax=getBoundary(cx,cy,L)
+		xmin,xmax,ymin,ymax = getBoundary(cx,cy,L)
 		xvec, yvec = getWindow(xmin,xmax,ymin,ymax)
 		Z = data[ymin:ymax+1,xmin:xmax+1]
 		z = Z.flatten()
@@ -217,6 +221,7 @@ def map_func(tile, data, L):
 	return result
 
 def map_star_func(a_b):
+	print a_b
 	return map_func(*a_b)
 
 def reduce_func():
