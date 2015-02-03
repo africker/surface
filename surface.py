@@ -176,10 +176,23 @@ def reduce_func():
 
 def main():
 	args = getArgs()
+	L = args.length
 	raster = Raster(args)
 	raster.read(args.dem)
 	data = raster.getArray()
 	tiles = raster.getTiles()
+
+	# Multiprocessing
+	cores = mp.cpu_count()
+	pool = mp.Pool(processes = cores)
+	pool.map(
+		map_star_func,
+		itertools.izip(
+			tiles,
+			itertools.repeat(data),
+			itertools.repeat(L)
+		)
+	)
 
 
 if __name__ == "__main__":
