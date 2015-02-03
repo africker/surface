@@ -165,7 +165,14 @@ class Surface(object):
 		return self.elevation
 
 
+def map_func():
+	pass
 
+def map_star_func():
+	pass
+
+def reduce_func():
+	pass
 
 def main():
 	args = getArgs()
