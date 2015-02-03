@@ -27,6 +27,22 @@ Dependecies
 ---------
 <a href="www.numpy.org">numpy</a>, <a href="http://trac.osgeo.org/gdal/wiki/GdalOgrInPython">GDAL</a>
 
+Example
+---------
+On Mac or Linux change make sure `surface.py` is set to be executable:
+`chmod u+x surface.py`
+
+Create a directory to store output.
+`mkdir output`
+Then to calculate the elevation, slope, and curvature using a 9 x 9 window with the sample dem ("dem-example.tif") from within the directory containing `surface.py` type
+`./surface.py -d dem-example.tif -o output -l 9`
+
+On Windows you do not need to make the program executable - it already will be. Just make a directory (here called "output") to store the output files.  The run surface.py
+`python surface.py -d dem-example.tif -o output -l 9`
+
+Try opening up the output rasters in QGIS or your favorite GIS.
+
+
 References
 ---------
 [1] Hurst MD, Mudd SM, Walcott R, Attal M, Yoo K (2012) Using hilltop curvature to derive the spatial distribution of erosion rates. J Geophys Res Earth Surf 117:F0217. <a href="http://doi:10.1029/2011JF002057">doi:10.1029/2011JF002057</a>
