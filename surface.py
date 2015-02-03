@@ -1,37 +1,34 @@
 import numpy as np
 from numpy.linalg import inv
 
-def getX(L):
-	"""X matrix for six term polynomial regression
-	"""
-	# Computing X matrix outside of Surface object
-	# reduces times X must be computed.
-	axis = np.arange(L)
-	col, row = np.meshgrid(axis,axis)
-	# A[row,col] will reproduce A
-	colf = col.flatten()
-	rowf = row.flatten()
-	X = np.column_stack(
-		[
-			colf**2,
-			rowf**2,
-			colf*rowf,
-			colf,
-			rowf,
-			np.ones(len(colf))
-		]
-	)
-	return X
+
 
 class Surface(object):
-	def __init__(self, A, X):
-		self.A = A
-		self.X = X
+	def __init__(self, x, y, z, cx, cy):
+		self.x = x
+		self.y = y
+		self.z = z
+		self.cx = cx
+		self.cy = cy
 
-	def _getY(self):
+	def setX(self):
+		xf = self.x.flatten()
+		yf = self.y.flatten()
+		self.X = np.column_stack(
+			[
+				xf**2,
+				yf**2,
+				xf*yf,
+				xf,
+				yf,
+				np.ones(len(xf))
+			]
+		)
+
+	def _getZ(self):
 		""" Get the y vector for regression
 		"""
-		self.y = A.flatten()
+		self.Z = self.z.flatten()
 
 	def fit(self):
 		"""Matrix regression
@@ -39,9 +36,9 @@ class Surface(object):
 		B = inv(X'X)X'y
 		where B is vector of coefficients for F(x,y).
 		"""
-		self._getY()
+		self._getZ()
 		XTXinv = inv(np.dot(self.X.T, self.X))
-		XTy = np.dot(self.X.T, self.y)
+		XTy = np.dot(self.X.T, self.Z)
 		self.B = np.dot(XTXinv, XTy)
 
 	def curvature(self):
@@ -59,3 +56,13 @@ class Surface(object):
 		d, e = self.B[3],self.B[4]
 		self.S = np.sqrt(d**2 + e**2)
 		return self.S
+
+	def elevation(self):
+		"""Elevation
+		F(cx,cy) where cx and cy are coordinates for focal
+		pixel
+		"""
+		X_tilde = np.array([self.cx**2,self.cy**2,
+			self.cx*self.cy,self.cx,self.cy,1])
+		self.elevation = np.dot(self.B, X_tilde)
+		return self.elevation
