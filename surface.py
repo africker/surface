@@ -1,6 +1,46 @@
 import numpy as np
 from numpy.linalg import inv
+import gdal
+from gdalconst import *
+from osgeo import osr
 
+class Raster(object):
+	def __init__(self, args):
+		self.args = args
+
+	def read(self, infile):
+		# never want to change the original input raster so use read only constant
+		self.infile = infile
+		self.raster = gdal.Open(self.infile, GA_ReadOnly)
+		self.band = self.raster.GetRasterBand(1)
+		self.NDV = self.band.GetNoDataValue()
+		self.x = self.band.XSize
+		self.y = self.band.YSize
+		DataType = self.band.DataType
+		self.DataType = gdal.GetDataTypeName(DataType)
+		self.GeoT = self.raster.GetGeoTransform()
+		prj = osr.SpatialReference()
+		self.prj = prj.ImportFromWkt(self.raster.GetProjectionRef())
+
+	def getArray(self):
+		self.array = band.ReadAsArray()
+		return self.array
+
+	def write(self, array, name):
+		driver= gdal.GetDriverByName("GTiff")
+		if self.DataType = "Float32":
+			self.DataType = gdal.GDT_Float32
+		self.outdata = array
+		self.outdata[np.isnan(self.outdata)] = self.NDV
+		# Create output file
+		DataSet = driver.Create(self.name, self.x, self.y, 
+			self.band, self.DataType)
+		DataSet.SetGeoTransform(self.GeoT)
+		DataSet.SetProjection(self.prj.ExportToWkt())
+		# Write data array
+		DataSet.GetRasterBand(1).WriteArray(self.outdata)
+		DataSet.GetRasterBand(1).SetNoDataValue(self.NDV)
+		DataSet = None
 
 
 class Surface(object):
