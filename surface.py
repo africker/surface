@@ -108,7 +108,7 @@ class Surface(object):
 		self.cx = cx
 		self.cy = cy
 
-	def setX(self):
+	def _setX(self):
 		xf = self.x.flatten()
 		yf = self.y.flatten()
 		self.X = np.column_stack(
@@ -133,6 +133,7 @@ class Surface(object):
 		B = inv(X'X)X'y
 		where B is vector of coefficients for F(x,y).
 		"""
+		self._setX()
 		self._getZ()
 		XTXinv = inv(np.dot(self.X.T, self.X))
 		XTy = np.dot(self.X.T, self.Z)
@@ -179,8 +180,11 @@ def getWindow(x,y,L):
 def map_func(tile, data, L):
 	gy,gx = tile
 	gx,gy = gx.flatten(),gy.flatten()
-	for x,y in zip(gx,gy):
-		getWindow(x,y,L)
+	for cx,cy in zip(gx,gy):
+		xmin,xmax,ymin,ymax=getWindow(x,y,L)
+		Z = data[ymin:ymax,xmin:xmax]
+		surface = Surface(x,y,z,cx,cy)
+		surface.fit()
 	pass
 
 def map_star_func(a_b):
