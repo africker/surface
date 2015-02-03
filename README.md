@@ -21,7 +21,7 @@ E = F(x<sub>c</sub>,y<sub>c</sub>) = ax<sub>c</sub><sup>2</sup> + by<sub>c</sub>
 
 where x<sub>c</sub> is the x index of the focal cell and y<sub>c</sub> is the y index of the focal cell.
 
-Use the side length (L), also called scale, to specifying the area of the moving window (L x L) focused on each cell that is used for computing elevation, slope and curvature.
+Use the side length (L), also called scale, to specify the area of the moving window (L x L) focused on each cell that is used for computing elevation, slope and curvature.
 
 Dependecies
 ---------
