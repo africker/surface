@@ -184,7 +184,7 @@ def getWindow(xmin,xmax,ymin,ymax):
 	yvec = np.arange(ymin,ymax)
 	# verify order is correct.
 	xvec, yvec = np.meshgrid(xvec,yvec)
-	return xvec,yvec
+	return xvec.flatten(), yvec.flatten()
 
 def map_func(tile, data, L):
 	gy,gx = tile
