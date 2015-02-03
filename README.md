@@ -31,7 +31,8 @@ Example
 ---------
 ### Unix like system
 
-On Mac or Linux set `surface.py` to be executable:
+On Mac or Linux set `surface.py` to be executable at the command line using Terminal:
+
 `chmod u+x surface.py`
 
 Create a directory to store output.
