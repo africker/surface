@@ -168,8 +168,8 @@ class Surface(object):
 def map_func():
 	pass
 
-def map_star_func():
-	pass
+def map_star_func(a_b):
+	return map_func(*a_b)
 
 def reduce_func():
 	pass
