@@ -62,6 +62,26 @@ class Raster(object):
 		self.array = band.ReadAsArray()
 		return self.array
 
+	def getTiles(self):
+		# Get indexing arrays
+		# considering rows as gy and columns as gx
+		shape = self.array.shape
+		self.gy, self.gx = np.indices(shape)
+		# For now, tile size is 100 x 100
+		dim = 100
+		tiles = []
+		i,j = 0,0
+		while i <= shape[0]:
+			while j <= shape[1]:
+				gx = self.gx[i:i+dim,j:j+dim]
+				gy = self.gy[i:i+dim,j:j+dim]
+				tile = [gx,gy]
+				tiles.append(tile)
+				j += dim
+			j = 0
+			i += dim
+		return tiles
+
 	def write(self, array, name):
 		driver= gdal.GetDriverByName("GTiff")
 		if self.DataType = "Float32":
@@ -144,9 +164,13 @@ class Surface(object):
 		return self.elevation
 
 
-
 def main():
 	args = getArgs()
+	raster = Raster(args)
+	raster.read(args.dem)
+	data = raster.getArray()
+	tiles = raster.getTiles()
+
 
 if __name__ == "__main__":
 	main()
