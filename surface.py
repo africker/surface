@@ -177,6 +177,8 @@ def reduce_func():
 def main():
 	args = getArgs()
 	L = args.length
+	outdir = args.outdir
+
 	raster = Raster(args)
 	raster.read(args.dem)
 	data = raster.getArray()
@@ -185,7 +187,7 @@ def main():
 	# Multiprocessing
 	cores = mp.cpu_count()
 	pool = mp.Pool(processes = cores)
-	pool.map(
+	results = pool.map(
 		map_star_func,
 		itertools.izip(
 			tiles,
@@ -193,6 +195,12 @@ def main():
 			itertools.repeat(L)
 		)
 	)
+	elev, slope, curve = reduce_func(results)
+	
+	os.chdir(outdir)
+	raster.write(elev, "elev{}.tif".format(L))
+	raster.write(slope, "slope{}.tif".format(L))
+	raster.write(curve, "curve{}.tif".format(L))
 
 
 if __name__ == "__main__":
