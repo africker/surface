@@ -87,7 +87,7 @@ class Raster(object):
 
 	def write(self, array, name):
 		driver= gdal.GetDriverByName("GTiff")
-		if self.DataType = "Float32":
+		if self.DataType == "Float32":
 			self.DataType = gdal.GDT_Float32
 		self.outdata = array
 		self.outdata[np.isnan(self.outdata)] = self.NDV
