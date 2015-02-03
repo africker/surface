@@ -41,13 +41,13 @@ Create a directory to store output.
 
 Then to calculate the elevation, slope, and curvature using a 9 x 9 window with the sample dem ("dem-example.tif") from within the directory containing surface.py type
 
-`./surface.py -d dem-example.tif -o output -l 9`
+`./surface.py -d dem-example.tif -o output -l 9 -v`
 
 ### Windows
 
 On Windows you do not need to make the program executable - it already will be. Just make a directory (here called "output") to store the output files.  Then run surface.py
 
-`python surface.py -d dem-example.tif -o output -l 9`
+`python surface.py -d dem-example.tif -o output -l 9 -v`
 
 Try opening up the output rasters in QGIS or your favorite GIS.
 
