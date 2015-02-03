@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import argparse, itertools, os, sys
+import argparse, itertools, os, sys, time
 import multiprocessing as mp
 import numpy as np
 from numpy.linalg import inv
@@ -58,8 +58,10 @@ class Raster(object):
 		DataType = self.band.DataType
 		self.DataType = gdal.GetDataTypeName(DataType)
 		self.GeoT = self.raster.GetGeoTransform()
-		prj = osr.SpatialReference()
-		self.prj = prj.ImportFromWkt(self.raster.GetProjectionRef())
+		# Problem
+		self.prj = osr.SpatialReference()
+		self.prj.ImportFromWkt(self.raster.GetProjectionRef())
+
 
 	def getArray(self):
 		self.array = self.band.ReadAsArray()
@@ -87,14 +89,17 @@ class Raster(object):
 		return tiles
 
 	def write(self, array, name):
+		self.name = name
 		driver= gdal.GetDriverByName("GTiff")
 		if self.DataType == "Float32":
+			#print gdal.GDT_Float32
 			self.DataType = gdal.GDT_Float32
 		self.outdata = array
 		self.outdata[np.isnan(self.outdata)] = self.NDV
 		# Create output file
+		band = 1
 		DataSet = driver.Create(self.name, self.x, self.y, 
-			self.band, self.DataType)
+			band, self.DataType)
 		DataSet.SetGeoTransform(self.GeoT)
 		DataSet.SetProjection(self.prj.ExportToWkt())
 		# Write data array
@@ -169,7 +174,6 @@ class Surface(object):
 		return self.elevation
 
 def getBoundary(x,y,L):
-	print "In getBoundary"
 	s = L/2
 	xmin = x - s
 	if xmin < 0:
@@ -182,15 +186,13 @@ def getBoundary(x,y,L):
 	return xmin,xmax,ymin,ymax
 
 def getWindow(xmin,xmax,ymin,ymax):
-	print "In getWindow"
-	xvec = np.arange(xmin,xmax)
-	yvec = np.arange(ymin,ymax)
+	xvec = np.arange(xmin,xmax+1)
+	yvec = np.arange(ymin,ymax+1)
 	# verify order is correct.
 	xvec, yvec = np.meshgrid(xvec,yvec)
 	return xvec.flatten(), yvec.flatten()
 
 def map_func(tile, data, L):
-	print "From map_func"
 	gy,gx = tile
 	gx,gy = gx.flatten(),gy.flatten()
 	elev = np.zeros(len(gx))
@@ -201,36 +203,44 @@ def map_func(tile, data, L):
 		xvec, yvec = getWindow(xmin,xmax,ymin,ymax)
 		Z = data[ymin:ymax+1,xmin:xmax+1]
 		z = Z.flatten()
-		z_sub = z[z!=np.nan]
+		z_sub = z[~np.isnan(z)]
 		not_nan = len(z_sub)
 		i = np.all([gx==cx, gy==cy], axis=0)
-		if not_nan < 6 or data[cx,cy]==np.nan:
+		if not_nan < 6 or np.isnan(data[cy,cx]):
 			elev[i] = np.nan
 			slope[i] = np.nan
 			curve[i] = np.nan
 		else:
-			xvec = xvec[z!=np.nan]
-			yvec = yvec[z!=np.nan]
-			surface = Surface(xvec,yvec,z,cx,cy)
+			xvec = xvec[~np.isnan(z)]
+			yvec = yvec[~np.isnan(z)]			
+			surface = Surface(xvec,yvec,z_sub,cx,cy)
 			surface.fit()
 			elev[i] = surface.elevation()
 			slope[i] = surface.slope()
 			curve[i] = surface.curvature()
 	result = (gx,gy,elev,slope,curve)
-	print result
 	return result
 
 def map_star_func(a_b):
-	print a_b
 	return map_func(*a_b)
 
-def reduce_func():
-	pass
+def reduce_func(data,results):
+	#print data.dtype
+	elev_master = np.zeros(data.shape, data.dtype)
+	slope_master = np.zeros(data.shape, data.dtype)
+	curve_master = np.zeros(data.shape, data.dtype)
+	for result in results:
+		gx,gy,elev,slope,curve = result
+		elev_master[gy,gx] = elev
+		slope_master[gy,gx] = slope
+		curve_master[gy,gx] = curve
+	return elev_master, slope_master, curve_master
 
 def main():
+	t_i = time.time()
 	args = getArgs()
 	L = args.length
-	if L%2 != 1:
+	if L % 2 != 1:
 		print "L must be an odd number. Exiting."
 		sys.exit(1)
 	outdir = args.outdir
@@ -239,6 +249,10 @@ def main():
 	raster.read(args.dem)
 	data = raster.getArray()
 	tiles = raster.getTiles()
+	if args.verbose:
+		print "The image is {} x {} pixels.".format(*data.shape)
+		print "There are {} tiles that will be run in parallel.".format(
+			len(tiles))
 
 	# Multiprocessing
 	cores = mp.cpu_count()
@@ -251,12 +265,16 @@ def main():
 			itertools.repeat(L)
 		)
 	)
-	elev, slope, curve = reduce_func(results)
-	
+
+	elev, slope, curve = reduce_func(data, results)
 	os.chdir(outdir)
 	raster.write(elev, "elev{}.tif".format(L))
 	raster.write(slope, "slope{}.tif".format(L))
 	raster.write(curve, "curve{}.tif".format(L))
+	
+	t_f = time.time()
+	if args.verbose:
+		print "Total elapsed time was {} minutes.".format((t_f-t_i)/60.)
 
 
 if __name__ == "__main__":
